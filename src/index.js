@@ -1,18 +1,32 @@
 const express = require("express");
 const app = express();
-
+const cors = require("cors");
 app.use(express.json());
+
+const connection = require("./configs/database");
 // routers
 const userRouter = require("./routes/user.route");
 
-app.get("/", function (req, res) {
-  res.send("Hello API.");
-});
+app.use(
+  cors({
+    origin: "*",
+    supports_credentials: true,
+    allowedHeaders: [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Header",
+      "Access-Control-Expose-Headers",
+      "Content-Range",
+      "Content-Length",
+      "Connection",
+      "Content-Type",
+      "X-Content-Type-Options",
+      "Set-Cookies",
+      "*",
+    ],
+    exposedHeaders: ["x-access-token", "x-refresh-token"],
+  })
+);
 
-app.post("/", async (req, res) => {
-  console.log(req.body);
-  return res.status(200).send("Ok");
-});
 //localhost:3000/users
 app.use("/users", userRouter);
 
@@ -22,4 +36,12 @@ app.use("*", function (req, res) {
 
 app.listen(3000, function () {
   console.log("Server is listening at port 3000.");
+  // connection.connect((err) => {
+  //   if (err) {
+  //     console.log("Database connection failed: ", err.message);
+  //     return;
+  //   }
+
+  //   console.log("Database connection success!");
+  // });
 });
